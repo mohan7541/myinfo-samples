@@ -1,0 +1,21 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: your-client-id
+            client-secret: your-client-secret
+            scope: openid, profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            provider: keycloak
+        provider:
+          keycloak:
+            authorization-uri: https://your-auth-server/auth/realms/your-realm/protocol/openid-connect/auth
+            token-uri: https://your-auth-server/auth/realms/your-realm/protocol/openid-connect/token
+            user-info-uri: https://your-auth-server/auth/realms/your-realm/protocol/openid-connect/userinfo
+            jwk-set-uri: https://your-auth-server/auth/realms/your-realm/protocol/openid-connect/certs
+            issuer-uri: https://your-auth-server/auth/realms/your-realm
+  thymeleaf:
+    cache: false
