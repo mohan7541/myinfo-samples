@@ -1,0 +1,48 @@
+package com.example.oauth;
+
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.client.http.OAuth2AuthorizedClientHttpRequestFactory;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.web.client.RestTemplate;
+
+import javax.net.ssl.SSLContext;
+import java.io.File;
+
+@Configuration
+public class OAuth2ClientConfig {
+
+    @Bean
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository clientRegistrationRepository,
+            OAuth2AuthorizedClientRepository authorizedClientRepository) throws Exception {
+
+        RestTemplate restTemplate = customRestTemplate();
+        OAuth2AuthorizedClientHttpRequestFactory requestFactory = 
+            new OAuth2AuthorizedClientHttpRequestFactory(clientRegistrationRepository, restTemplate.getRequestFactory());
+
+        DefaultOAuth2AuthorizedClientManager authorizedClientManager =
+                new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
+        authorizedClientManager.setAuthorizedClientHttpRequestFactory(requestFactory);
+        
+        return authorizedClientManager;
+    }
+
+    @Bean
+    public RestTemplate customRestTemplate() throws Exception {
+        SSLContext sslContext = SSLContextBuilder.create()
+                .loadTrustMaterial(new File("/path/to/cacerts"), "changeit".toCharArray())
+                .build();
+
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLContext(sslContext)
+                .build();
+
+        return new RestTemplate(new HttpComponentsClientHttpRequestFactory(httpClient));
+    }
+}
