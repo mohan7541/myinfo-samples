@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.dbs.cybersecure.android'
+    namespace ''
     compileSdk 34 // Updated to Android 14
 
     defaultConfig {
