@@ -9,7 +9,7 @@ android {
     compileSdk 34 // Updated to Android 14
 
     defaultConfig {
-        applicationId "com.dbs.cybersecure.android"
+        applicationId ""
         minSdk 24 // Android 7.0
         targetSdk 34 // Android 14
         versionCode 28
